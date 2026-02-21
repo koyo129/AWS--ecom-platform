@@ -34,6 +34,11 @@ resource "aws_launch_template" "web" {
   instance_type = "t2.micro"
   vpc_security_group_ids = [aws_security_group.ec2_sg.id]
 
+metadata_options {
+    http_endpoint = "enabled"
+    http_tokens   = "optional" 
+  }
+
   user_data = base64encode(<<-EOF
 #!/bin/bash
 # Install Apache
