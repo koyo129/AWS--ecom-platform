@@ -29,6 +29,12 @@ During this project, I encountered and solved several challenges:
 5. Run `terraform apply`.
 6. Access the site via the output variable.
 
+
+<img width="1110" height="624" alt="Screenshot 2026-02-22 210354" src="https://github.com/user-attachments/assets/67e619e2-c9ad-42e3-ac9f-c8ccc95c024f" /><img width="1117" height="571" alt="Screenshot 2026-02-22 210421" src="https://github.com/user-attachments/assets/37cff391-875e-4477-8b8f-ed4b02d918f7" />
+
+<img width="1110" height="624" alt="Screenshot 2026-02-22 210354" src="https://github.com/user-attachments/assets/67e619e2-c9ad-42e3-ac9f-c8ccc95c024f" />
+
+
 ## Future Improvements
 - [ ] **Security:** Implement SSL/TLS certificates via AWS Certificate Manager (ACM)
 - [ ] **Data:** Add an RDS PostgreSQL database to handle product inventory. (after frontend is done)
