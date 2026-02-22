@@ -32,6 +32,7 @@ resource "aws_launch_template" "web" {
   name_prefix   = "web-blueprint-"
   image_id      = "ami-0d52744d6551d851e"
   instance_type = "t2.micro"
+  update_default_version = true
   vpc_security_group_ids = [aws_security_group.ec2_sg.id]
 
 metadata_options {
