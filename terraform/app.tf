@@ -40,6 +40,33 @@ resource "aws_launch_template" "web" {
     http_tokens   = "optional" 
   }
 
+# Auto Scaling Group
+resource "aws_autoscaling_group" "asg" {
+  desired_capacity    = 2
+  max_size            = 3
+  min_size            = 2
+  vpc_zone_identifier = [aws_subnet.private_a.id, aws_subnet.private_c.id]
+  target_group_arns   = [aws_lb_target_group.tg.arn]
+
+  launch_template {
+    id      = aws_launch_template.web.id
+    version = "$Latest" 
+  }
+
+  instance_refresh {
+    strategy = "Rolling"
+    preferences {
+      min_healthy_percentage = 50
+    }
+  }
+
+  tag {
+    key                 = "Name"
+    value               = "CloudCommerce-Web"
+    propagate_at_launch = true
+  }
+}
+
   # This is how you correctly include the script
   user_data = base64encode(<<-EOF
 #!/bin/bash
