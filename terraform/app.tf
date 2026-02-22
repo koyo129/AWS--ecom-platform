@@ -1,4 +1,4 @@
-# Load Balancer
+# 1. Load Balancer Configuration
 resource "aws_lb" "app" {
   name               = "main-alb"
   load_balancer_type = "application"
@@ -27,7 +27,7 @@ resource "aws_lb_listener" "http" {
   }
 }
 
-# Launch Template 
+# 2. Launch Template Configuration
 resource "aws_launch_template" "web" {
   name_prefix            = "web-blueprint-"
   image_id               = "ami-0d52744d6551d851e"
@@ -46,40 +46,17 @@ sudo apt-get update -y
 sudo apt-get install -y apache2
 sudo systemctl start apache2
 sudo systemctl enable apache2
-
 TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
 INSTANCE_ID=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-id)
 AZ=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/placement/availability-zone)
 PRIVATE_IP=$(hostname -I | awk '{print $1}')
-
 cat <<HTML > /var/www/html/index.html
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>CloudCommerce | Tech Store</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-50 text-gray-900 font-sans">
-    <nav class="bg-white shadow-md p-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-blue-600">CloudCommerce</h1>
-            <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-semibold">Region: ap-northeast-1</span>
-        </div>
-    </nav>
-    <div class="bg-yellow-100 border-b border-yellow-200 p-2 text-center text-xs font-mono text-yellow-800">
-        Connected to: <strong>$INSTANCE_ID</strong> | IP: <strong>$PRIVATE_IP</strong> | AZ: <strong>$AZ</strong>
-    </div>
-    <header class="container mx-auto my-12 px-6">
-        <div class="bg-blue-600 rounded-2xl p-10 text-white flex flex-col md:flex-row items-center justify-between">
-            <div class="md:w-1/2">
-                <h2 class="text-4xl font-extrabold mb-4">The Future of Cloud Computing is Here.</h2>
-                <p class="mb-6 text-blue-100 italic">High Availability. Multi-AZ. Scalable Architecture.</p>
-                <button class="bg-white text-blue-600 px-6 py-3 rounded-lg font-bold shadow-lg">Shop Now</button>
-            </div>
-            <div class="md:w-1/3 text-6xl"> ☁️ 🚀 </div>
-        </div>
-    </header>
+<html>
+<body style="background-color:#2563eb; color:white; text-align:center; font-family:sans-serif;">
+    <h1>CloudCommerce is LIVE</h1>
+    <p>Instance ID: $INSTANCE_ID</p>
+    <p>AZ: $AZ</p>
 </body>
 </html>
 HTML
@@ -87,7 +64,7 @@ EOF
   )
 }
 
-# Auto Scaling Group 
+# 3. Auto Scaling Group Configuration
 resource "aws_autoscaling_group" "asg" {
   desired_capacity    = 2
   max_size            = 3
@@ -102,9 +79,6 @@ resource "aws_autoscaling_group" "asg" {
 
   instance_refresh {
     strategy = "Rolling"
-    preferences {
-      min_healthy_percentage = 50
-    }
   }
 
   tag {
