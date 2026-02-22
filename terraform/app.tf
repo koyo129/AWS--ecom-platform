@@ -145,8 +145,21 @@ resource "aws_autoscaling_group" "asg" {
   vpc_zone_identifier = [aws_subnet.private_a.id, aws_subnet.private_c.id]
   target_group_arns   = [aws_lb_target_group.tg.arn]
 
-  launch_template {
+launch_template {
     id      = aws_launch_template.web.id
-    version = "$Latest"
+    version = aws_launch_template.web.latest_version # Track version jumps
+  }
+
+  instance_refresh {
+    strategy = "Rolling"
+    preferences {
+      min_healthy_percentage = 50
+    }
+  }
+
+  tag {
+    key                 = "Name"
+    value               = "CloudCommerce-Web"
+    propagate_at_launch = true
   }
 }
