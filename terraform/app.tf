@@ -12,7 +12,7 @@ resource "aws_lb_target_group" "tg" {
   protocol = "HTTP"
   vpc_id   = aws_vpc.main.id
   health_check {
-    path = "/"
+    path    = "/"
     matcher = "200"
   }
 }
@@ -27,10 +27,10 @@ resource "aws_lb_listener" "http" {
   }
 }
 
-# Launch Template (The Blueprint)
+# Launch Template 
 resource "aws_launch_template" "web" {
   name_prefix            = "web-blueprint-"
-  image_id               = "ami-0d52744d6551d851e" # Double check this is Ubuntu 22.04 in your region!
+  image_id               = "ami-0d52744d6551d851e"
   instance_type          = "t2.micro"
   update_default_version = true
   vpc_security_group_ids = [aws_security_group.ec2_sg.id]
@@ -40,49 +40,18 @@ resource "aws_launch_template" "web" {
     http_tokens   = "optional" 
   }
 
-# Auto Scaling Group
-resource "aws_autoscaling_group" "asg" {
-  desired_capacity    = 2
-  max_size            = 3
-  min_size            = 2
-  vpc_zone_identifier = [aws_subnet.private_a.id, aws_subnet.private_c.id]
-  target_group_arns   = [aws_lb_target_group.tg.arn]
-
-  launch_template {
-    id      = aws_launch_template.web.id
-    version = "$Latest" 
-  }
-
-  instance_refresh {
-    strategy = "Rolling"
-    preferences {
-      min_healthy_percentage = 50
-    }
-  }
-
-  tag {
-    key                 = "Name"
-    value               = "CloudCommerce-Web"
-    propagate_at_launch = true
-  }
-}
-
-  # This is how you correctly include the script
   user_data = base64encode(<<-EOF
 #!/bin/bash
-# 1. Install Updates and Apache
 sudo apt-get update -y
 sudo apt-get install -y apache2
 sudo systemctl start apache2
 sudo systemctl enable apache2
 
-# 2. Get Metadata (using Token for security)
 TOKEN=$(curl -X PUT "http://169.254.169.254/latest/api/token" -H "X-aws-ec2-metadata-token-ttl-seconds: 21600")
 INSTANCE_ID=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/instance-id)
 AZ=$(curl -s -H "X-aws-ec2-metadata-token: $TOKEN" http://169.254.169.254/latest/meta-data/placement/availability-zone)
 PRIVATE_IP=$(hostname -I | awk '{print $1}')
 
-# 3. Create the Website
 cat <<HTML > /var/www/html/index.html
 <!DOCTYPE html>
 <html lang="en">
@@ -116,4 +85,31 @@ cat <<HTML > /var/www/html/index.html
 HTML
 EOF
   )
+}
+
+# Auto Scaling Group 
+resource "aws_autoscaling_group" "asg" {
+  desired_capacity    = 2
+  max_size            = 3
+  min_size            = 2
+  vpc_zone_identifier = [aws_subnet.private_a.id, aws_subnet.private_c.id]
+  target_group_arns   = [aws_lb_target_group.tg.arn]
+
+  launch_template {
+    id      = aws_launch_template.web.id
+    version = "$Latest" 
+  }
+
+  instance_refresh {
+    strategy = "Rolling"
+    preferences {
+      min_healthy_percentage = 50
+    }
+  }
+
+  tag {
+    key                 = "Name"
+    value               = "CloudCommerce-Web"
+    propagate_at_launch = true
+  }
 }
