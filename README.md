@@ -28,3 +28,9 @@ During this project, I encountered and solved several challenges:
 4. Run `terraform plan`.
 5. Run `terraform apply`.
 6. Access the site via the output variable.
+
+## Future Improvements
+- [ ] **Security:** Implement SSL/TLS certificates via AWS Certificate Manager (ACM)
+- [ ] **Data:** Add an RDS PostgreSQL database to handle product inventory. (after frontend is done)
+- [ ] **Automation:** Integrate GitHub Actions for a full CI/CD pipeline.
+- [ ] **Security:** Improve frontend design and add backend functions
