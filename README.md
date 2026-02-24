@@ -3,16 +3,10 @@
 A Terraform-managed web infrastructure for a web page, featuring self-healing capabilities and automated load balancing.
 
 ## Features
-* **Auto Scaling:** Automatically maintains 2 EC2 instances across multiple Availability Zones.
-* **Load Balancing:** Uses an Application Load Balancer (ALB) to distribute traffic and handle health checks.
-* **Infrastructure as Code:** 100% automated deployment using Terraform.
-* **Self-Healing:** Tested and verified to automatically replace terminated instances without downtime.
-
-## Tech 
-* **Cloud:** AWS (EC2, VPC, ALB, ASG, NAT Gateway)
-* **IaC:** Terraform
-* **OS:** Ubuntu 22.04 LTS
-* **Web Server:** Apache2
+* **Auto Scaling:** Maintains 2 EC2 instances across multiple Availability Zones.
+* **Load Balancing:** Use ALB to distribute traffic and handle health checks.
+* **Infrastructure as Code:** Terraform
+* **Self-Healing:** Testedto replace terminated instances 
 
 ## Challenges & Troubleshooting
 During this project, I encountered and solved several challenges:
@@ -21,14 +15,6 @@ During this project, I encountered and solved several challenges:
 2. **State Management:** Faced an "Invalid target address" error when trying to replace a resource that had been removed from the state. I learned to use `terraform state list` to audit the environment before executing specific target commands.
 3. **Infrastructure Debugging:** Successfully identified a 502 Bad Gateway as a "warm-up" phase for new instances, learning to monitor Target Group Health Checks to verify deployment success.
 
-## How to Deploy
-1. Clone the repository.
-2. Link AWS account through access and secret key.
-3. Run `terraform init`.
-4. Run `terraform plan`.
-5. Run `terraform apply`.
-6. Access the site via the output variable.
-
 
 <img width="1117" height="571" alt="Screenshot 2026-02-22 210421" src="https://github.com/user-attachments/assets/37cff391-875e-4477-8b8f-ed4b02d918f7" />
 
@@ -36,7 +22,11 @@ During this project, I encountered and solved several challenges:
 
 
 ## Future Improvements
-- [ ] **Security:** Implement SSL/TLS certificates via AWS Certificate Manager (ACM)
+- [ ] **Security:** Implement SSL/TLS certificates with ACM (buy dns)
 - [ ] **Data:** Add an RDS PostgreSQL database to handle product inventory. (after frontend is done)
-- [ ] **Automation:** Integrate GitHub Actions for a full CI/CD pipeline.
 - [ ] **Security:** Improve frontend design and add backend functions
+
+NEW UPDATE!!
+- Implemented CI/CD through Github actions, PR.
+- Created script to automate infrastructure deployment
+- Pull Request (PR) triggers a terraform plan for code review, and merging to main executes for terraform apply
