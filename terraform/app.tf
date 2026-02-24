@@ -1,4 +1,6 @@
 # 1. Load Balancer Configuration
+
+# Testing
 resource "aws_lb" "app" {
   name               = "main-alb"
   load_balancer_type = "application"
