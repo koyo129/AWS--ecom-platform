@@ -18,7 +18,7 @@ resource "aws_security_group" "alb_sg" {
   }
 }
 
-# EC2 Security Group (Internal Trust Only)
+# EC2 Security Group 
 resource "aws_security_group" "ec2_sg" {
   name        = "ec2-security-group"
   vpc_id      = aws_vpc.main.id
