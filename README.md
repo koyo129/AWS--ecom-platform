@@ -9,12 +9,6 @@ A Terraform-managed web infrastructure for a web page, featuring self-healing ca
 * **Self-Healing:** Testedto replace terminated instances
 * **CI/CD** Automated through GitHub Actions
 
-## Challenges & Troubleshooting
-During this project, I encountered and solved several challenges:
-
-1. **Script Compatibility:** Encountered a 503 error initially because the script used `yum` on an Ubuntu based AMI.
-2. **State Management:** Faced an "Invalid target address" error when trying to replace a resource that had been removed from the state. I learned to use `terraform state list`
-3. **Infrastructure Debugging 502 gateawy:** Identified that instances in private subnets could not download Apache without a NAT Gateway route. With Target group health checks and corrected the routing table to ensure successful initialization
 
 
 This diagram illustrates the high-availability design of the platform. It features a multi-AZ VPC with traffic entering through an Internet Gateway to an Application Load Balancer. The backend is secured in Private Subnets, using a NAT Gateway for outbound-only maintenance traffic
@@ -32,6 +26,14 @@ With terraform it shows the execution plan for 21 resources, using automation an
 CI/CD Pipeline integration on Github actions where it checked terraform init, plan, apply if there was not any problems.
 <img width="628" height="362" alt="Screenshot 2026-02-26 203630" src="https://github.com/user-attachments/assets/9a689850-008a-4593-ad34-436d2465146a" />
 
+
+
+## Challenges & Troubleshooting
+During this project, I encountered and solved several challenges:
+
+1. **Script Compatibility:** Encountered a 503 error initially because the script used `yum` on an Ubuntu based AMI.
+2. **State Management:** Faced an "Invalid target address" error when trying to replace a resource that had been removed from the state. I learned to use `terraform state list`
+3. **Infrastructure Debugging 502 gateawy:** Identified that instances in private subnets could not download Apache without a NAT Gateway route. With Target group health checks and corrected the routing table to ensure successful initialization
 
 ## Future Improvements
 -  **Security:** Implement SSL/TLS certificates with ACM (buy dns)
