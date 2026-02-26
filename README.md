@@ -21,6 +21,7 @@ During this project, I encountered and solved several challenges:
 
 <img width="1110" height="624" alt="Screenshot 2026-02-22 210354" src="https://github.com/user-attachments/assets/67e619e2-c9ad-42e3-ac9f-c8ccc95c024f" />
 
+<img width="628" height="362" alt="Screenshot 2026-02-26 203630" src="https://github.com/user-attachments/assets/9a689850-008a-4593-ad34-436d2465146a" />
 
 ## Future Improvements
 - [ ] **Security:** Implement SSL/TLS certificates with ACM (buy dns)
