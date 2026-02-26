@@ -6,14 +6,15 @@ A Terraform-managed web infrastructure for a web page, featuring self-healing ca
 * **Auto Scaling:** Maintains 2 EC2 instances across multiple Availability Zones.
 * **Load Balancing:** Use ALB to distribute traffic and handle health checks.
 * **Infrastructure as Code:** Terraform
-* **Self-Healing:** Testedto replace terminated instances 
+* **Self-Healing:** Testedto replace terminated instances
+* **CI/CD** Automated through GitHub Actions
 
 ## Challenges & Troubleshooting
 During this project, I encountered and solved several challenges:
 
-1. **Script Compatibility:** Encountered a 503 error initially because the bootstrap script used `yum` on an Ubuntu-based AMI. I updated the User Data to use `apt-get`, ensuring the web server initialized correctly.
+1. **Script Compatibility:** Encountered a 503 error initially because the script used `yum` on an Ubuntu-based AMI.
 2. **State Management:** Faced an "Invalid target address" error when trying to replace a resource that had been removed from the state. I learned to use `terraform state list` to audit the environment before executing specific target commands.
-3. **Infrastructure Debugging:** Successfully identified a 502 Bad Gateway as a "warm-up" phase for new instances, learning to monitor Target Group Health Checks to verify deployment success.
+3. **Infrastructure Debugging 502 gateawy:** Identified that instances in private subnets could not download Apache without a NAT Gateway route. Diagnosed using Target Group Health Checks and corrected the routing table to ensure successful initialization
 
 
 <img width="1117" height="571" alt="Screenshot 2026-02-22 210421" src="https://github.com/user-attachments/assets/37cff391-875e-4477-8b8f-ed4b02d918f7" />
@@ -23,7 +24,7 @@ During this project, I encountered and solved several challenges:
 
 ## Future Improvements
 - [ ] **Security:** Implement SSL/TLS certificates with ACM (buy dns)
-- [ ] **Data:** Add an RDS PostgreSQL database to handle product inventory. (after frontend is done)
+- [ ] **Data:** Add an RDS PostgreSQL database to handle product inventory.
 - [ ] **Security:** Improve frontend design and add backend functions
 
 NEW UPDATE!!
