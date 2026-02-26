@@ -1,4 +1,4 @@
-# AWS--ecom-platform
+# AWS Webpage platform
 
 A Terraform-managed web infrastructure for a web page, featuring self-healing capabilities and automated load balancing.
 
@@ -34,9 +34,9 @@ CI/CD Pipeline integration on Github actions where it checked terraform init, pl
 
 
 ## Future Improvements
-- [ ] **Security:** Implement SSL/TLS certificates with ACM (buy dns)
-- [ ] **Data:** Add an RDS PostgreSQL database to handle product inventory.
-- [ ] **Security:** Improve frontend design and add backend functions
+-  **Security:** Implement SSL/TLS certificates with ACM (buy dns)
+-  **Data:** Add an RDS PostgreSQL database to handle product inventory.
+-  **Security:** Improve frontend design and add backend functions
 
 NEW UPDATE!!
 - Implemented CI/CD through Github actions, PR.
