@@ -45,9 +45,9 @@ resource "aws_launch_template" "web" {
 sudo apt-get update -y
 sudo apt-get install -y python3 python3-pip git
 pip3 install flask psycopg2-binary
-git clone https://github.com/yourusername/yourrepo.git /home/ubuntu/app
+git clone https://github.com/koyo129/AWS--ecom-platform.git /home/ubuntu/app
 cd /home/ubuntu/app
-python3 app.py
+python3 eccomerce.py
 EOF
   )
 }
