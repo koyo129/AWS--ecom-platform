@@ -1,3 +1,4 @@
+import os
 from flask import Flask
 import psycopg2
 
@@ -5,10 +6,10 @@ app = Flask(__name__)
 
 def get_db_connection():
     conn = psycopg2.connect(
-        host="localhost",
-        database="shopdb",
-        user="kokakohyo",
-        password=""
+        host=os.environ.get("DB_HOST"),
+        database=os.environ.get("DB_NAME"),
+        user=os.environ.get("DB_USER"),
+        password=os.environ.get("DB_PASS")
     )
     return conn
 
@@ -21,10 +22,10 @@ def home():
     cur.close()
     conn.close()
 
-    html = "<h1>Welcome to CloudCommerce!</h1>"
+    html = "<h1>Welcome !</h1>"
     for product in products:
         html += f"<p>{product[1]} - ${product[2]}</p>"
     return html
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=80)
