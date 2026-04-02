@@ -47,10 +47,11 @@ sudo apt-get install -y python3 python3-pip git
 pip3 install flask psycopg2-binary
 git clone https://github.com/koyo129/AWS--ecom-platform.git /home/ubuntu/app
 cd /home/ubuntu/app
-python3 eccomerce.py
-EOF
-  )
-}
+export DB_HOST="${aws_db_instance.postgres.address}"
+export DB_NAME="shopdb"
+export DB_USER="${var.db_username}"
+export DB_PASS="${var.db_password}"
+python3 ecommerce.py
 
 # 3. Auto Scaling Group Configuration
 resource "aws_autoscaling_group" "asg" {
