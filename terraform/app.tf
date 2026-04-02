@@ -40,7 +40,7 @@ resource "aws_launch_template" "web" {
     http_tokens   = "required"
   }
 
-  user_data = base64encode(<<-EOF
+  user_data = base64encode(<<-SCRIPT
 #!/bin/bash
 sudo apt-get update -y
 sudo apt-get install -y python3 python3-pip git
@@ -52,6 +52,9 @@ export DB_NAME="shopdb"
 export DB_USER="${var.db_username}"
 export DB_PASS="${var.db_password}"
 python3 ecommerce.py
+SCRIPT
+  )
+}
 
 # 3. Auto Scaling Group Configuration
 resource "aws_autoscaling_group" "asg" {
