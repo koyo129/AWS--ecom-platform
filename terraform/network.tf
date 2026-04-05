@@ -5,7 +5,7 @@ resource "aws_vpc" "main" {
   tags = { Name = "project-vpc" }
 }
 
-# Public Subnets (For the Entrance)
+# Public Subnets 
 resource "aws_subnet" "public_a" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.1.0/24"
@@ -22,7 +22,7 @@ resource "aws_subnet" "public_c" {
   tags = { Name = "public-1c" }
 }
 
-# Private Subnets (For the Servers)
+# Private Subnets 
 resource "aws_subnet" "private_a" {
   vpc_id            = aws_vpc.main.id
   cidr_block        = "10.0.10.0/24"
@@ -43,17 +43,30 @@ resource "aws_internet_gateway" "igw" {
   tags   = { Name = "igw" }
 }
 
-# NAT Gateway (One-way exit for private servers)
+# NAT Gateway A
 resource "aws_eip" "nat" {
   domain = "vpc"
-  tags   = { Name = "nat-eip" }
+  tags   = { Name = "nat-eip-a" }
 }
 
 resource "aws_nat_gateway" "main" {
   allocation_id = aws_eip.nat.id
   subnet_id     = aws_subnet.public_a.id
   depends_on    = [aws_internet_gateway.igw]
-  tags          = { Name = "main-nat" }
+  tags          = { Name = "nat-a" }
+}
+
+# NAT Gateway C
+resource "aws_eip" "nat_c" {
+  domain = "vpc"
+  tags   = { Name = "nat-eip-c" }
+}
+
+resource "aws_nat_gateway" "nat_c" {
+  allocation_id = aws_eip.nat_c.id
+  subnet_id     = aws_subnet.public_c.id
+  depends_on    = [aws_internet_gateway.igw]
+  tags          = { Name = "nat-c" }
 }
 
 # Route Tables & Associations
@@ -83,6 +96,14 @@ resource "aws_route_table" "private_rt" {
   }
 }
 
+resource "aws_route_table" "private_rt_c" {
+  vpc_id = aws_vpc.main.id
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.nat_c.id
+  }
+}
+
 resource "aws_route_table_association" "pri_a" {
   subnet_id      = aws_subnet.private_a.id
   route_table_id = aws_route_table.private_rt.id
@@ -90,5 +111,5 @@ resource "aws_route_table_association" "pri_a" {
 
 resource "aws_route_table_association" "pri_c" {
   subnet_id      = aws_subnet.private_c.id
-  route_table_id = aws_route_table.private_rt.id
+  route_table_id = aws_route_table.private_rt_c.id
 }
