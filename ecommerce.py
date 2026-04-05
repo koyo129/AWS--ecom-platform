@@ -36,9 +36,5 @@ def debug():
     return f"DB_HOST: {os.environ.get('DB_HOST', 'NOT SET')}"
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=80)
-```
+    app.run(host="0.0.0.0", port=5000)
 
-Push to GitHub, then do instance refresh, then visit:
-```
-http://your-alb-url/debug
