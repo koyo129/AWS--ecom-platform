@@ -6,7 +6,7 @@ resource "aws_sns_topic" "alerts" {
 resource "aws_sns_topic_subscription" "email" {
   topic_arn = aws_sns_topic.alerts.arn
   protocol  = "email"
-  endpoint  = "your-email@gmail.com"
+  endpoint  = var.alert_email
 }
 
 # 2. EC2 CPU alarm
