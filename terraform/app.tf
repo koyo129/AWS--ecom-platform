@@ -35,7 +35,7 @@ resource "aws_launch_template" "web" {
   update_default_version = true
   vpc_security_group_ids = [aws_security_group.ec2_sg.id]
 
-iam_instance_profile {
+  iam_instance_profile {
   name = aws_iam_instance_profile.ec2_profile.name
 }
 
@@ -55,7 +55,7 @@ export DB_HOST="${aws_db_instance.postgres.address}"
 export DB_NAME="shopdb"
 export DB_USER="${var.db_username}"
 export DB_PASS="${var.db_password}"
-python3 ecommerce.py
+python3 ecommerce.py &
 SCRIPT
   )
 }
