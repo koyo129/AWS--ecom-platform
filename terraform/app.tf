@@ -47,14 +47,30 @@ resource "aws_launch_template" "web" {
   user_data = base64encode(<<-SCRIPT
 #!/bin/bash
 sudo apt-get update -y
-sudo apt-get install -y python3 python3-pip git
+sudo apt-get install -y python3 python3-pip git postgresql-client
 pip3 install flask psycopg2-binary
 git clone https://github.com/koyo129/AWS--ecom-platform.git /home/ubuntu/app
 cd /home/ubuntu/app
+
 export DB_HOST="${aws_db_instance.postgres.address}"
 export DB_NAME="shopdb"
 export DB_USER="${var.db_username}"
 export DB_PASS="${var.db_password}"
+
+# Table
+PGPASSWORD="${var.db_password}" psql -h "${aws_db_instance.postgres.address}" -U "${var.db_username}" -d shopdb -c "CREATE TABLE IF NOT EXISTS products (id SERIAL PRIMARY KEY, name VARCHAR(100), price NUMERIC);"
+
+# Gym products
+PGPASSWORD="${var.db_password}" psql -h "${aws_db_instance.postgres.address}" -U "${var.db_username}" -d shopdb -c "INSERT INTO products (name, price) SELECT 'Whey Protein', 45 WHERE NOT EXISTS (SELECT 1 FROM products WHERE name='Whey Protein');"
+PGPASSWORD="${var.db_password}" psql -h "${aws_db_instance.postgres.address}" -U "${var.db_username}" -d shopdb -c "INSERT INTO products (name, price) SELECT 'Dumbbells', 120 WHERE NOT EXISTS (SELECT 1 FROM products WHERE name='Dumbbells Set');"
+PGPASSWORD="${var.db_password}" psql -h "${aws_db_instance.postgres.address}" -U "${var.db_username}" -d shopdb -c "INSERT INTO products (name, price) SELECT 'Resistance Bands', 25 WHERE NOT EXISTS (SELECT 1 FROM products WHERE name='Resistance Bands');"
+PGPASSWORD="${var.db_products}" psql -h "${aws_db_instance.postgres.address}" -U "${var.db_username}" -d shopdb -c "INSERT INTO products (name, price) SELECT 'Pre-Workout', 35 WHERE NOT EXISTS (SELECT 1 FROM products WHERE name='Pre-Workout');"
+PGPASSWORD="${var.db_password}" psql -h "${aws_db_instance.postgres.address}" -U "${var.db_username}" -d shopdb -c "INSERT INTO products (name, price) SELECT 'Lifty Factory shirts', 15 WHERE NOT EXISTS (SELECT 1 FROM products WHERE name='Gym Gloves');"
+
+DB_HOST="${aws_db_instance.postgres.address}" \
+DB_NAME="shopdb" \
+DB_USER="${var.db_username}" \
+DB_PASS="${var.db_password}" \
 python3 ecommerce.py &
 SCRIPT
   )
