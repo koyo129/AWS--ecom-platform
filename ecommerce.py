@@ -13,6 +13,25 @@ def get_db_connection():
     )
     return conn
 
+def init_db():
+    conn = get_db_connection()
+    cur = conn.cursor()
+    cur.execute("""
+        CREATE TABLE IF NOT EXISTS products (
+            id SERIAL PRIMARY KEY,
+            name VARCHAR(100),
+            price NUMERIC
+        );
+    """)
+    cur.execute("INSERT INTO products (name, price) SELECT 'Whey Protein', 45 WHERE NOT EXISTS (SELECT 1 FROM products WHERE name='Whey Protein');")
+    cur.execute("INSERT INTO products (name, price) SELECT 'Dumbbells Set', 120 WHERE NOT EXISTS (SELECT 1 FROM products WHERE name='Dumbbells Set');")
+    cur.execute("INSERT INTO products (name, price) SELECT 'Resistance Bands', 25 WHERE NOT EXISTS (SELECT 1 FROM products WHERE name='Resistance Bands');")
+    cur.execute("INSERT INTO products (name, price) SELECT 'Pre-Workout', 35 WHERE NOT EXISTS (SELECT 1 FROM products WHERE name='Pre-Workout');")
+    cur.execute("INSERT INTO products (name, price) SELECT 'Gym Gloves', 15 WHERE NOT EXISTS (SELECT 1 FROM products WHERE name='Gym Gloves');")
+    conn.commit()
+    cur.close()
+    conn.close()
+
 @app.route("/")
 def home():
     conn = get_db_connection()
@@ -59,8 +78,8 @@ def home():
     </head>
     <body>
         <nav>
-            <h1> Lifty Factory</h1>
-            <p>Inspire the new gen</p>
+            <h1>🏋️ Lifty Factory</h1>
+            <p>Built on AWS • Powered by Flask</p>
         </nav>
         <div class="hero">
             <h2>Train <span>Harder.</span> Live <span>Stronger.</span></h2>
@@ -69,10 +88,14 @@ def home():
         <div class="products">
             {product_cards}
         </div>
+        <footer>
+            <p>© 2026 Lifty Factory. Powered by AWS Auto Scaling.</p>
+        </footer>
     </body>
     </html>
     """
     return html
 
 if __name__ == "__main__":
+    init_db()
     app.run(host="0.0.0.0", port=5000)
