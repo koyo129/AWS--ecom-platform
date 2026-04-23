@@ -26,7 +26,7 @@ def home():
     cur.close()
     conn.close()
 
-    html = "<h1>Welcome to CloudCommerce!</h1>"
+    html = "<h1>Welcome to Lifty Factory!</h1>"
     for product in products:
         html += f"<p>{product[1]} - ${product[2]}</p>"
     return html
