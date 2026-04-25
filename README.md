@@ -1,46 +1,111 @@
-# AWS Webpage platform
+Updated 04/25/2026
+# Lifty Factory — AWS 3-Tier E-Commerce Platform
 
-A Terraform-managed web infrastructure for a web page, featuring self-healing capabilities and automated load balancing.
-
-## Features
-* **Auto Scaling:** Maintains 2 EC2 instances across multiple Availability Zones.
-* **Load Balancing:** Use ALB to distribute traffic and handle health checks.
-* **Infrastructure as Code:** Terraform
-* **Self-Healing:** Testedto replace terminated instances
-* **CI/CD** Automated through GitHub Actions
+<img width="624" height="172" alt="Screenshot 2026-04-25 at 22 52 43" src="https://github.com/user-attachments/assets/d71eb9d6-62c8-4c70-bf84-9df6efd8f91d" />
 
 
+<img width="632" height="184" alt="Screenshot 2026-04-25 at 22 53 38" src="https://github.com/user-attachments/assets/32367614-854e-4331-b57d-f31074c81b17" />
 
-This diagram illustrates the high-availability design of the platform. It features a multi-AZ VPC with traffic entering through an Internet Gateway to an Application Load Balancer. The backend is secured in Private Subnets, using a NAT Gateway for outbound-only maintenance traffic
-<img width="784" height="744" alt="Screenshot 2026-02-27 004840" src="https://github.com/user-attachments/assets/083f24ec-5d01-4bb1-a5ff-38b3597eb1cb" />
-
-
-For ASG, I set a desired capacity of 2 and a max size of 3 to ensure the application remains highly available across multiple Availability Zones.
-<img width="1117" height="571" alt="Screenshot 2026-02-22 210421" src="https://github.com/user-attachments/assets/37cff391-875e-4477-8b8f-ed4b02d918f7" />
+<img width="631" height="316" alt="Screenshot 2026-04-25 at 22 54 15" src="https://github.com/user-attachments/assets/2d40322d-66d0-4e03-a98f-ab570feb65b5" />
 
 
-With terraform it shows the execution plan for 21 resources, using automation and no need manual configuration.
-<img width="1110" height="624" alt="Screenshot 2026-02-22 210354" src="https://github.com/user-attachments/assets/67e619e2-c9ad-42e3-ac9f-c8ccc95c024f" />
+A fully functional 3-tier e-commerce web application built on AWS,
+managed entirely with Terraform
 
+## Architecture
 
-CI/CD Pipeline integration on Github actions where it checked terraform init, plan, apply if there was not any problems.
-<img width="628" height="362" alt="Screenshot 2026-02-26 203630" src="https://github.com/user-attachments/assets/9a689850-008a-4593-ad34-436d2465146a" />
+- **Tier 1 — Presentation:** Application Load Balancer in public subnets
+- **Tier 2 — Application:** EC2 instances running Python Flask in private subnets
+- **Tier 3 — Database:** RDS PostgreSQL in private subnets
 
+## Tech Stack
 
+| Layer | Technology |
+|---|---|
+| Infrastructure | Terraform |
+| Cloud | AWS Tokyo (ap-northeast-1) |
+| Web Framework | Python Flask |
+| Database | PostgreSQL on RDS |
+| Load Balancer | AWS ALB |
+| Monitoring | CloudWatch + SNS |
+| CI/CD | GitHub Actions |
+
+## Security
+
+- EC2 in private subnets — not directly accessible from internet
+- RDS in private subnets — only accessible from EC2 on port 5432
+- Security groups with least privilege per layer
+
+## High Availability
+
+- Multi-AZ deployment across ap-northeast-1a and ap-northeast-1c
+- Separate NAT Gateway per AZ — no single point of failure
+- ASG automatically replaces unhealthy instances
+- ALB health checks detect and route around failures
+- RDS Multi-AZ with automatic failover
+
+## Monitoring & Alerting
+
+CloudWatch alarms trigger SNS email alerts for:
+- EC2 CPU above 80%
+- ALB 5xx error count above 10
+
+## CI/CD Pipeline
+
+- Pull Request → triggers `terraform plan` for code review
+- Merge to main → triggers `terraform apply`
+- Automated infrastructure deployment via GitHub Actions
+
+## Testing & Validation
+
+### Self-Healing Test 
+Manually terminated an EC2 instance. The ALB automatically routed
+traffic to the healthy instance with zero downtime. ASG detected
+the missing instance and launched a replacement automatically.
+
+### Load Test 
+Used `hey` load testing tool to send 10,000 requests:
+- 1,000 requests → 100% success rate
+- 10,000 requests → 98.75% success rate (111 req/sec)
+- Average response time: 410ms under normal load
+
+## Terraform Files
+
+| providers.tf | AWS provider + version config |
+| storage.tf | S3 remote state backend |
+| network.tf | VPC, subnets, IGW, NAT, route tables |
+| security.tf | Security groups for ALB, EC2, RDS |
+| app.tf | ALB, Launch Template, ASG, IAM |
+| database.tf | RDS PostgreSQL instance |
+| variables.tf | Input variables |
+| outputs.tf | Website URL and RDS endpoint |
+| monitoring.tf | CloudWatch alarms + SNS |
 
 ## Challenges & Troubleshooting
-During this project, I encountered and solved several challenges:
 
-1. **Script Compatibility:** Encountered a 503 error initially because the script used `yum` on an Ubuntu based AMI.
-2. **State Management:** Faced an "Invalid target address" error when trying to replace a resource that had been removed from the state. I learned to use `terraform state list`
-3. **Infrastructure Debugging 502 gateawy:** Identified that instances in private subnets could not download Apache without a NAT Gateway route. With Target group health checks and corrected the routing table to ensure successful initialization
+**1. Script Compatibility (503 error)**
+Used `yum` package manager on an Ubuntu AMI which uses `apt-get`.
+Fixed by switching to `apt-get` in user_data.
+
+**2. NAT Gateway Routing (502 error)**
+Private subnet EC2 instances couldn't reach internet to download
+packages. Fixed by correctly associating private route tables
+with NAT Gateway.
+
+**3. Terraform State Mismatch**
+Editing code after deployment caused state conflicts. Used
+`terraform state list` and `terraform state rm` to resync state.
+
+**4. Database Table Initialization**
+RDS was provisioned but products table didn't exist. Solved by
+adding `init_db()` function in Flask that automatically creates
+the table and seeds data on startup.
 
 ## Future Improvements
--  **Security:** Implement SSL/TLS certificates with ACM (buy dns)
--  **Data:** Add an RDS PostgreSQL database to handle product inventory.
--  **Security:** Improve frontend design and add backend functions
 
-NEW UPDATE!!
-- Implemented CI/CD through Github actions, PR.
-- Created script to automate infrastructure deployment
-- Pull Request (PR) triggers a terraform plan for code review, and merging to main executes for terraform apply
+- HTTPS with ACM certificate and custom domain(paid)
+- Nginx as reverse proxy in front of Flask
+- Dynamic auto scaling policies based on CPU
+- S3 bucket for product images
+- Redis/ElastiCache for session management
+- DynamoDB state locking for team environments
