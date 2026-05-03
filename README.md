@@ -1,4 +1,4 @@
-Updated 04/25/2026
+Updated 05/03/2026
 # Lifty Factory — AWS 3-Tier E-Commerce Platform
 
 <img width="624" height="172" alt="Screenshot 2026-04-25 at 22 52 43" src="https://github.com/user-attachments/assets/d71eb9d6-62c8-4c70-bf84-9df6efd8f91d" />
