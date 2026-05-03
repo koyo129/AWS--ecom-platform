@@ -12,6 +12,31 @@ Updated 04/25/2026
 A fully functional 3-tier e-commerce web application built on AWS,
 managed entirely with Terraform
 
+## BACK STORY
+
+In my current work I perform operational maintenance 
+for enterprise network equipments
+Day to day this involves manually monitoring systems for issues, 
+reacting quickly when problems occur, and resolving them by hand.
+
+Over time I noticed several inefficiencies:
+- Manual monitoring means problems are only caught when someone 
+  notices them
+- No automated recovery — every incident requires human intervention
+- Repetitive manual tasks that could be automated
+- Single points of failure with no redundancy
+
+Because of these factors it made me think if there is a way to effectively improve
+this system and workflow hence why I started learning cloud infrastructure and DevOps practices to 
+understand how modern systems solve these exact problems:
+- Automated alerting services
+- Auto Scaling Groups replace manual instance recovery
+- Infrastructure as Code replaces manual server configuration
+- Multi-AZ architecture eliminates single points of failure
+
+This project is my attempt to build the kind of reliable, 
+automated, self-healing infrastructure for a webpage
+
 ## Architecture
 
 - **Tier 1 — Presentation:** Application Load Balancer in public subnets
