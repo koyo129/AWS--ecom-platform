@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Lifty Factory</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #1a1a1a; color: #fff; font-family: Arial, sans-serif; }
+        nav { background: #111; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; }
+        nav h1 { color: #ff6b00; font-size: 24px; }
+        nav p { color: #aaa; font-size: 14px; }
+        .hero { text-align: center; padding: 60px 20px; background: linear-gradient(135deg, #111, #2a2a2a); }
+        .hero h2 { font-size: 48px; margin-bottom: 10px; }
+        .hero h2 span { color: #ff6b00; }
+        .hero p { color: #aaa; font-size: 18px; }
+        .products { display: flex; flex-wrap: wrap; gap: 20px; padding: 40px; justify-content: center; }
+        .card { background: #2a2a2a; border: 1px solid #333; border-radius: 12px; padding: 30px; width: 250px; text-align: center; transition: border 0.3s; }
+        .card:hover { border-color: #ff6b00; }
+        .card h2 { font-size: 18px; margin-bottom: 10px; }
+        .card .price { color: #ff6b00; font-size: 24px; font-weight: bold; margin-bottom: 20px; }
+        .card button { background: #ff6b00; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-weight: bold; width: 100%; }
+        .card button:hover { background: #e05a00; }
+        footer { text-align: center; padding: 20px; background: #111; color: #555; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <h1>🏋️ Lifty Factory</h1>
+        <p>Built on AWS • Powered by Flask</p>
+    </nav>
+    <div class="hero">
+        <h2>Train <span>Harder.</span> Live <span>Stronger.</span></h2>
+        <p>Premium gym equipment and supplements delivered to your door.</p>
+    </div>
+    <div class="products" id="product-grid">
+        <p style="color: #aaa;">Loading products...</p>
+    </div>
+    <footer>
+        <p>© 2026 Lifty Factory. Powered by AWS Auto Scaling.</p>
+    </footer>
+
+    <script>
+        const API_URL = "http://localhost:5000"  // change this to your Flask service URL later
+
+        fetch(`${API_URL}/products`)
+            .then(res => res.json())
+            .then(products => {
+                const grid = document.getElementById("product-grid")
+                grid.innerHTML = products.map(p => `
+                    <div class="card">
+                        <h2>${p.name}</h2>
+                        <p class="price">$${p.price}</p>
+                        <button>Add to Cart</button>
+                    </div>
+                `).join("")
+            })
+            .catch(() => {
+                document.getElementById("product-grid").innerHTML = 
+                    "<p style='color: #aaa;'>Failed to load products.</p>"
+            })
+    </script>
+</body>
+</html>
