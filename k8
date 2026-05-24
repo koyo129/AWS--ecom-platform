@@ -1,0 +1,37 @@
+openapi: 3.0.0
+info:
+  title: Uketsuke AI Booking API
+  version: 1.0.0
+servers:
+  - url: https://landmine-antiquely-stalling.ngrok-free.dev
+paths:
+  /book:
+    post:
+      summary: Book an appointment
+      operationId: bookAppointment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                  description: Customer name
+                date:
+                  type: string
+                  description: Date in YYYY-MM-DD format
+                time:
+                  type: string
+                  description: Time in HH:MM format
+      responses:
+        '200':
+          description: Booking result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
